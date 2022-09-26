@@ -40,7 +40,7 @@ def factorial(n):
 def e():
     n = 1
     e = 1
-    while(1/n > EPSILON):
+    while(1/(n*(n+1)) >= EPSILON):
         e += 1/(n*(n+1))
         n+=1
 
