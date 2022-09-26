@@ -27,11 +27,15 @@ MENU = '''\nOptions below:
 
 def factorial(n):
     n = int(n)
-    fact = n*(n-1)
-    n-=1 
+    if(n==1):
+        return 1
 
     if(n < 0):
         return None 
+
+    fact = n*(n-1)
+    n-=1
+     
     while n > 1:
         fact *= (n-1)
         n-=1
@@ -40,8 +44,8 @@ def factorial(n):
 def e():
     n = 1
     e = 1
-    while(1/(n*(n+1)) >= EPSILON):
-        e += 1/(n*(n+1))
+    while(1/factorial(n) >= EPSILON):
+        e += 1/factorial(n)
         n+=1
 
     return round(e,10)
