@@ -17,12 +17,12 @@ from re import M
 EPSILON = 0.0000001 
 
 MENU = '''\nOptions below:
-    ‘F’: Factorial of N.
-    ‘E’: Approximate value of e.
-    ‘P’: Approximate value of Pi.
-    ‘S’: Approximate value of the sinh of X.
-    ‘M’: Display the menu of options.
-    ‘X’: Exit.
+    'F': Factorial of N.
+    'E': Approximate value of e.
+    'P': Approximate value of Pi.
+    'S': Approximate value of the sinh of X.
+    'M': Display the menu of options.
+    'X': Exit.
 '''
 
 def factorial(n):
@@ -55,7 +55,7 @@ def pi():
     pi = 0
     sig = (-1)**n/((2*n)+1)
     
-    while (sig > EPSILON):
+    while (math.fabs(sig) > EPSILON):
         sig = (-1)**n/((2*n)+1)
         n+=1
         pi += sig
