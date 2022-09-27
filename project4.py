@@ -98,7 +98,7 @@ def main():
 
             print(f'Calculated: {calc}')
             print(f'Math: {mth}')
-            print(f'Diff: {diff}')
+            print(f'Diff: {diff:.10f}')
 
             
 
@@ -111,7 +111,7 @@ def main():
 
             print(f'Calculated: {calc}')
             print(f'Math: {mth}')
-            print(f'Diff: {diff}')
+            print(f'Diff: {diff:.10f}')
 
             
 
