@@ -65,9 +65,12 @@ def pi():
 def sinh(x):
     n = 0
     sig = (x**((2*n)+1))/(factorial(2*n+1))
+    sinh = 0
     while(sig > EPSILON):
         sig = (x**((2*n)+1))/(factorial(2*n+1))
-        n+=1 
+        sinh += sig
+        n+=1
+    return sinh
 
 def main():
     print(MENU)
@@ -79,12 +82,12 @@ def main():
             print('Factorial\n')
             N = int(input('Input non-negative integer N: \n'))
 
-            calc = round(factorial(N),10)
-            mth = round(math.factorial(N),10)
+            calc = factorial(N)
+            mth = math.factorial(N)
             diff = calc-mth
 
-            print(f'Calculated: {calc}')
-            print(f'Math: {mth}')
+            print(f'Calculated: {calc:.10f}')
+            print(f'Math: {mth:.10f}')
             print(f'Diff: {diff}')
 
             continue
@@ -92,12 +95,12 @@ def main():
             
             print('e')
 
-            calc = round(e(),10)
-            mth = round(math.e,10)
+            calc = e()
+            mth = math.e
             diff = math.fabs(calc-mth)
 
-            print(f'Calculated: {calc}')
-            print(f'Math: {mth}')
+            print(f'Calculated: {calc:.10f}')
+            print(f'Math: {mth:.10f}')
             print(f'Diff: {diff:.10f}')
 
             
@@ -105,12 +108,12 @@ def main():
         if(func == 'p'):
             print('pi')
 
-            calc = round(pi(),10)
-            mth = round(math.pi,10)
+            calc = pi(),10
+            mth = math.pi
             diff = math.fabs(calc-mth)
 
-            print(f'Calculated: {calc}')
-            print(f'Math: {mth}')
+            print(f'Calculated: {calc:.10f}')
+            print(f'Math: {mth:.10f}')
             print(f'Diff: {diff:.10f}')
 
             
@@ -119,13 +122,13 @@ def main():
             print('sinh\n')
             x = float(input('X in radians: '))
 
-            calc = round(sinh(x),10)
-            mth = round(math.sinh(x),10)
+            calc = sinh(x)
+            mth = math.sinh(x)
             diff = math.fabs(calc-mth)
 
-            print(f'Calculated: {calc}')
-            print(f'Math: {mth}')
-            print(f'Diff: {diff}')
+            print(f'Calculated: {calc:.10f}')
+            print(f'Math: {mth:.10f}')
+            print(f'Diff: {diff:.10f}')
 
             
         if(func == 'm'):
