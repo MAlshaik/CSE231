@@ -13,21 +13,20 @@
 #############################################################
 
 import math
-from re import M
 EPSILON = 0.0000001 
 
 MENU = '''\nOptions below:
-    'F': Factorial of N.
-    'E': Approximate value of e.
-    'P': Approximate value of Pi.
-    'S': Approximate value of the sinh of X.
-    'M': Display the menu of options.
-    'X': Exit.
+    ‘F’: Factorial of N.
+    ‘E’: Approximate value of e.
+    ‘P’: Approximate value of Pi.
+    ‘S’: Approximate value of the sinh of X.
+    ‘M’: Display the menu of options.
+    ‘X’: Exit.
 '''
 
 def factorial(n):
     n = int(n)
-    if(n==1):
+    if(n<=1 and n>=0):
         return 1
 
     if(n < 0):
@@ -57,10 +56,11 @@ def pi():
     
     while (math.fabs(sig) > EPSILON):
         sig = (-1)**n/((2*n)+1)
+        if math.fabs(sig) > EPSILON:
+            pi += sig
         n+=1
-        pi += sig
 
-    return round((pi*4),10)
+    return round(pi*4,10)
 
 def sinh(x):
     n = 0
@@ -68,16 +68,17 @@ def sinh(x):
     sinh = 0
     while(sig > EPSILON):
         sig = (x**((2*n)+1))/(factorial(2*n+1))
-        sinh += sig
+        if math.fabs(sig) > EPSILON:
+            sinh += sig
         n+=1
-    return sinh
+    return round(sinh,10)
 
 def main():
     print(MENU)
     func = ''
 
     while(func != 'x'):
-        func = input("Choses an option: ").lower()
+        func = input("\nChoose an option: \n").lower()
         if(func == 'f'):
             print('Factorial\n')
             N = int(input('Input non-negative integer N: \n'))
@@ -86,8 +87,8 @@ def main():
             mth = math.factorial(N)
             diff = calc-mth
 
-            print(f'Calculated: {calc:.10f}')
-            print(f'Math: {mth:.10f}')
+            print(f'Calculated: {calc}')
+            print(f'Math: {mth}')
             print(f'Diff: {diff}')
 
             continue
@@ -108,7 +109,7 @@ def main():
         if(func == 'p'):
             print('pi')
 
-            calc = pi(),10
+            calc = pi()
             mth = math.pi
             diff = math.fabs(calc-mth)
 
