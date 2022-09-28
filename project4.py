@@ -63,10 +63,14 @@ def pi():
     return round(pi*4,10)
 
 def sinh(x):
+    try:
+        x = float(x)
+    except:
+        return None
     n = 0
     sig = (x**((2*n)+1))/(factorial(2*n+1))
     sinh = 0
-    while(sig > EPSILON):
+    while(math.fabs(sig) > EPSILON):
         sig = (x**((2*n)+1))/(factorial(2*n+1))
         if math.fabs(sig) > EPSILON:
             sinh += sig
@@ -80,8 +84,16 @@ def main():
     while(func != 'x'):
         func = input("\nChoose an option: \n").lower()
         if(func == 'f'):
-            print('Factorial\n')
-            N = int(input('Input non-negative integer N: \n'))
+            print('Factorial')
+            try:
+                N = int(input('Input non-negative integer N: \n'))
+                if(N<0):
+                    print("Invalid N.")
+                    continue 
+            except:
+                print("Invalid N.")
+                continue  
+            
 
             calc = factorial(N)
             mth = math.factorial(N)
@@ -91,8 +103,8 @@ def main():
             print(f'Math: {mth}')
             print(f'Diff: {diff}')
 
-            continue
-        if(func == 'e'):
+            
+        elif(func == 'e'):
             
             print('e')
 
@@ -104,9 +116,7 @@ def main():
             print(f'Math: {mth:.10f}')
             print(f'Diff: {diff:.10f}')
 
-            
-
-        if(func == 'p'):
+        elif(func == 'p'):
             print('pi')
 
             calc = pi()
@@ -119,9 +129,13 @@ def main():
 
             
 
-        if(func == 's'):
-            print('sinh\n')
-            x = float(input('X in radians: '))
+        elif(func == 's'):
+            print('sinh')
+            try:
+                x = float(input('X in radians: \n'))
+            except:
+                print("Invalid X.")
+                continue
 
             calc = sinh(x)
             mth = math.sinh(x)
@@ -132,7 +146,18 @@ def main():
             print(f'Diff: {diff:.10f}')
 
             
-        if(func == 'm'):
+        elif(func == 'm'):
+            print('''Options below:
+    ‘F’: Factorial of N.
+    ‘E’: Approximate value of e.
+    ‘P’: Approximate value of Pi.
+    ‘S’: Approximate value of the sinh of X.
+    ‘M’: Display the menu of options.
+    ‘X’: Exit.
+''')
+
+        elif(func != 'x'):
+            print(f"Invalid option: {func.upper()}")
             print(MENU)
     
     print("Thank you for playing.")
