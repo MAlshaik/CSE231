@@ -72,12 +72,9 @@ def avg_mass(file):
             avg_list.append(float(line[86:96]))
     return sum(avg_list)/len(avg_list)
 
-def habitable(file,up,low,mass):
-    habitable = 0
-    rocky = 0
-    temp = 0
-    mass = 0
-    radius = 0
+def habitable(file):
+    habitable = rocky = temp = mass = radius = 0
+    gaseous = []
     for line in file:
         if(make_float(line[97:105]) != -1):
             temp = float(line[97:105])
@@ -88,7 +85,12 @@ def habitable(file,up,low,mass):
                 density = get_density(mass, radius)
                 if((mass >= 0 and mass <= 10 and radius >=0 and radius <= 1.5) or density > 2000):
                     rocky += 1
-    return habitable,rocky
+                else:
+                    if(make_float(line[114:]) != -1):
+                        gaseous.append(float(line[114:]))
+
+
+    return habitable,rocky, min(gaseous)
 
 def gaseous():
     pass
@@ -103,9 +105,10 @@ def main():
     upp_bound = 350
     albedo = 0.5
 
-    num_stars = num_stars(FILE)
-    num_planets = num_planets(FILE)
-    avg_mass = avg_mass(FILE)
+    max_s = max_stars(FILE)
+    num_p = max_planets(FILE)
+    avg_m = avg_mass(FILE)
+    habitable = habitable(FILE, )
     
     
     
