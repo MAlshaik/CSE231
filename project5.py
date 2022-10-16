@@ -1,4 +1,13 @@
-
+###########################################################
+#
+#   Computer Project #5
+#   Algorithm
+#       Define all methods needed    
+#       prompt for csv file until it the name entered is valid
+#       prompt for maximum distance in light years
+#       set variables using the methods defined
+#       print results
+#############################################################
 import math
 import csv
 #Constants
@@ -11,7 +20,11 @@ PARSEC_LY = 3.262
 FILE = ''
 
 def open_file():
+    """
+    The open file method opens the file and returns the reader as well as the file object
+    """
     file = input("Input data to open: ") + ".csv"
+    #adds .csv to the input
     while(True):
         try:
             data = open(file)
@@ -20,17 +33,27 @@ def open_file():
         except:
              print('\nError: file not found.  Please try again.')
              file = input('Enter a file name: ') + ".csv"
+             #makes sure the csv file is valid
     return csvreader, data
 
 def make_float(s):
+    """
+    trys to float a value. If the value cannot be converted into a float it will return -1 otherwise it will return the float
+    """
     try:
         return float(s)
     except:
         return -1
   
 def get_density(mass, radius):
+    """
+    given the mass and radius of the planet this method returns the density
+    """
+    if(mass < 0 or radius < 0):
+        return -1
     mass *=  EARTH_MASS
     radius *= EARTH_RADIUS
+    #converts units to metric
     volume = (4/3)*(math.pi)*(radius**3)
     try:
         density = mass/volume
@@ -39,17 +62,27 @@ def get_density(mass, radius):
         return -1
 
 def temp_in_range(axis, star_temp, star_radius, albedo, low_bound, upp_bound):
+    """
+    Returns true if the temperature of the planet is within the valid range for habitation as we know it.
+    """
     star_radius *= SOLAR_RADIUS
     axis *= AU
+    #converts to metric units
     planet_temp = star_temp*((star_radius/(2*axis))**0.5)*(1-albedo)**0.25
+    #applies the equation to get the planet temperature
     return planet_temp >= low_bound and planet_temp <= upp_bound
+
 def get_dist_range():
+    """
+    Returns the maximum distance from the user input.
+    """
     while(True):
-        dist = input("\nEnter maximum distance from Earth (light years): \n")
+        dist = input("\nEnter maximum distance from Earth (light years): ")
         try:
             dist = float(dist)
             if dist < 0:
-                raise ValueError("\nError: Distance needs to be greater than 0.")
+                print("\nError: Distance needs to be greater than 0.")
+                continue
             else:
                 break
         except ValueError: 
@@ -58,16 +91,24 @@ def get_dist_range():
 
     
 def max_stars(file, data, range):
+    """
+    Returns the maximum number of stars  that are within the desired range
+    """
     max_list = []
     data.seek(0)
+    #starts csv file reader at the start of file 
     for line in file:
         if(make_float(line[9][0:].strip()) != -1):
+            #.strip strips the string of white space at the beginning and end of string
             if(float(line[9][0:].strip()) < range):
                 if(make_float(line[2][6]) != -1):
                     max_list.append(float(line[2][6]))
     return max(max_list) 
 
 def max_planets(file, data, range):
+    """
+    Returns the maximum number of planets that are within the desired range
+    """
     max_list = []
     data.seek(0)
     for line in file:
@@ -78,6 +119,9 @@ def max_planets(file, data, range):
     return max(max_list)
 
 def avg_mass(file, data, range):
+    """
+    Returns the average mass of the planets within the desired range.
+    """
     data.seek(0)
     avg_list = []
     for line in file:
@@ -88,6 +132,9 @@ def avg_mass(file, data, range):
     return sum(avg_list)/len(avg_list)
 
 def get_habitable(file, data, low, up, albedo, range):
+    """
+    Returns the habitable planets and the number of gaseous and rocky planets as well as the closest gaseous or rocky planets 
+    """
     habitable = rocky = 0
     min_gaseous = 99999
     min_rocky = 99999
@@ -96,18 +143,19 @@ def get_habitable(file, data, low, up, albedo, range):
     rock_name = ''
     
     for line in file:
-        if(make_float(line[6][0:].strip()) != -1): 
-            mass = float(line[6][0:].strip())
-            
         if(make_float(line[9][0:].strip()) != -1):
             if(float(line[9][0:].strip()) < range):
+            # makes sure the planet is in the desired range
                 try:
                     axis = float(line[4][0:].strip())
                     temp = float(line[7][0:].strip())
                     s_radius = float(line[8][0:].strip())
+                    #sets the variables required to put into the temp_in_range function. If one of the value is null, then it continues to the next planet
                     try: p_radius = float(line[5][0:].strip()) 
                     except: p_radius = -1
-                    mass = float(line[6][0:].strip())
+                    try: mass = float(line[6][0:].strip())
+                    except: mass = -1
+                    #makes sure that the variables dont interfere with the try: except on the outside
 
                     if temp_in_range(axis, temp, s_radius, albedo, low, up):
                         habitable += 1
@@ -115,11 +163,13 @@ def get_habitable(file, data, low, up, albedo, range):
                         if((mass >= 0 and mass <= 10) or (p_radius >=0 and p_radius <= 1.5) or (density > 2000)):
                             if(make_float(line[9][0:].strip()) != -1):
                                 if(float(line[9][0:].strip()) < min_rocky):
+                                    #finds min distance to rocky planet
                                     rocky += 1
                                     min_rocky = float(line[9][0:].strip())
                                     rock_name = line[0].strip()
                         else:
                             if(make_float(line[9][0:].strip()) != -1):
+                                #finds min distance to gaseous planet
                                 if(float(line[9][0:].strip()) < min_gaseous):
                                     min_gaseous = float(line[9][0:].strip())
                                     gas_name = line[0].strip()
@@ -131,7 +181,9 @@ def get_habitable(file, data, low, up, albedo, range):
 
 
 def main():
-     
+    """
+
+    """
     print('''Welcome to program that finds nearby exoplanets '''\
           '''in circumstellar habitable zone.''')
 
@@ -147,7 +199,7 @@ def main():
     avg_m = avg_mass(FILE, data, dist)
     habitable, rocky, min_gaseous, gas_name, min_rock, rock_name = get_habitable(FILE, data, low_bound, upp_bound, albedo, dist)
     
-    print(f'Number of stars in systems with the most stars: {int(max_s)}.')
+    print(f'\nNumber of stars in systems with the most stars: {int(max_s)}.')
     print(f'Number of planets in systems with the most planets: {int(max_p)}.')
     print(f'Average mass of the planets: {avg_m:.2f} Earth masses.')
 
