@@ -1,5 +1,5 @@
 import unittest
-from proj06.project6 import sort_characters
+from Proj06.proj06 import sort_characters
 
 
 class SortCharactersTest(unittest.TestCase):
