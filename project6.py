@@ -3,6 +3,9 @@ from operator import itemgetter
 from tkinter.tix import ROW
 
 from numpy import disp
+from operator import itemgetter
+
+from sympy import li
 
 NAME = 0
 ELEMENT = 1
@@ -58,7 +61,7 @@ def read_file(fp):
     fp.readline()
     for line in fp.readlines():
         line = line.strip().split(',')
-        if line[-1] == '': line[-1] = ('None')
+        if line[-1] == '': line[-1] = None
         
         tup = (line[0], line[2], line[3], int(line[1]), line[4])
         char_list.append(tuple(tup))
@@ -67,25 +70,53 @@ def read_file(fp):
 
 def get_characters_by_criterion (list_of_tuples, criteria, value):
     '''Retrieves the characters that match a certain criteria'''
-    pass
+    search_list = []
+    for tup in list_of_tuples:
+        if tup[criteria] != None:
+            try:
+                if tup[criteria].lower() == value.lower():
+                    search_list.append(tup)
+            except:
+                if tup[criteria] == value:
+                    search_list.append(tup)
+                
+    return search_list
+
         
 def get_characters_by_criteria(master_list, element, weapon, rarity):
     '''Retrieves the characters that match all criteria'''
-    pass
+    search_list = get_characters_by_criterion(master_list, 1, element)
+    search_list = get_characters_by_criterion(search_list, 2, weapon)
+    search_list = get_characters_by_criterion(search_list, 3, rarity)
+    return search_list
 
-def get_region_list  (master_list):
+
+def get_region_list (master_list):
     '''Retrieve all regions into a sorted non duplicate list'''
+    if len(master_list) == 0: return []
+
     sorted_list = []
     for tup in master_list:
-        if tup[-1] == '': sorted_list.append('None')
+        if tup[-1] == '': sorted_list.append(None)
         else: sorted_list.append(tup[-1])
 
-    return sorted(set(sorted_list))
+    sorted_list = set(sorted_list)
+
+    if None in sorted_list: 
+        sorted_list.remove(None)
+        sorted_list = sorted(sorted_list)
+    else:
+        sorted_list = sorted(sorted_list)
+
+    if len(sorted_list) == 1 and sorted_list[0] == None:
+        return []
+
+    return sorted_list
     
 
 def sort_characters (list_of_tuples):
     '''Returns a list of characters sorted by rarity and name'''
-    pass
+    return sorted(sorted(list_of_tuples), key=itemgetter(3), reverse = True)
 
 def display_characters (list_of_tuples):
     '''Given a list of characters, display their information'''
@@ -96,12 +127,17 @@ def display_characters (list_of_tuples):
 
 def get_option():
     '''Display a menu of options and prompt for input'''
-    pass  
+    try:
+        option = int(input(MENU))
+    except:
+        print(INVALID_INPUT)
+    if(option <= 1 or option >= 4):
+        print(INVALID_INPUT)  
   
 def main():
     file = open_file()
     master_list = read_file(file)
-    print(get_region_list(master_list))
+    print(master_list)
     display_characters(master_list)
 
 if __name__ == "__main__":
