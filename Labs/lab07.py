@@ -11,6 +11,8 @@ def read_file(fp):
     next(reader,None) 
     next(reader,None) 
     next(reader,None) 
+    next(reader,None)
+    next(reader,None)
     next(reader,None) 
 
     lineList = []
@@ -32,26 +34,25 @@ def get_totals(L):
     return us_pop,total_pop  # temoprary return value so main runs
 
 def get_industry_counts(L):
-    cons_count = 0
-    agri_count = 0
-    serv_count = 0
-    farm_count = 0
+    cons_count = manu_count = lei_count = bus_count = agri_count = 0
     indus_count = []
     for list in L:
-        for i in range(9,13):
-            if(list[i] == 'Construction'):
-                cons_count += 1
-            if(list[i] == 'Agriculture'):
-                agri_count += 1
-            if(list[i] == 'Service'):
-                serv_count += 1
-            if(list[i] == 'Farming'):
-                farm_count += 1
+        if(list[9] == 'Construction'):
+            cons_count += 1
+        if(list[9] == 'Agriculture'):
+            agri_count += 1
+        if(list[9] == 'Manufacturing'):
+            manu_count += 1
+        if(list[9] == 'Leisure/hospitality'):
+            lei_count += 1
+        if(list[9] == 'Business services'):
+            bus_count += 1
     
-    indus_count.append(['Construction',cons_count-1])
-    indus_count.append(['Agriculture', agri_count-1]) 
-    indus_count.append(['Service', serv_count-1]) 
-    indus_count.append(['Farming', farm_count-1])
+    indus_count.append(['Construction',cons_count])
+    indus_count.append(['Manufacturing', manu_count]) 
+    indus_count.append(['Leisure/hospitality', lei_count]) 
+    indus_count.append(['Business services', bus_count])
+    indus_count.append(['Agriculture', agri_count])
     return indus_count
 
 def get_largest_states(L):
