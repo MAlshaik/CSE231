@@ -1,6 +1,8 @@
 
 from operator import index
 
+from cv2 import LSD_REFINE_ADV
+
 
 GENRES = ['Unknown','Action', 'Adventure', 'Animation',"Children's",
           'Comedy','Crime','Documentary', 'Drama', 'Fantasy', 'Film-noir',
@@ -91,15 +93,38 @@ def year_movies(year,L_movies):
 
 def genre_movies(genre,L_movies):
     ''' Docstring'''
-    pass   # remove this line
+    movies = []
+    for tup in L_movies:
+        try:
+            for gen in tup[2]:
+                if gen == genre:
+                    movies.append(L_movies.index(tup))
+        except:
+            pass
+    return movies
 
 def gen_users (gender, L_users, L_reviews):
     ''' Docstring'''
-    pass   # remove this line
+    gen_mov = []
+    for i in range(len(L_users)):
+        try:
+            if L_users[i][1] == gender:
+                gen_mov.append(L_reviews[i])
+        except:
+            pass
+    return gen_mov
+
           
 def occ_users (occupation, L_users, L_reviews):
     ''' Docstring'''
-    pass   # remove this line
+    occ_use = []
+    for i in range(len(L_users)):
+        try:
+            if L_users[i][2] == occupation:
+                occ_use.append(L_reviews[i])
+        except:
+            pass
+    return occ_use
 
 def highest_rated_by_movie(L_in,L_reviews,N_movies):
     ''' Docstring'''
@@ -110,9 +135,14 @@ def highest_rated_by_reviewer(L_in,N_movies):
     pass   # remove this line
  
 def main():
-    file = open_file('movies')
-    L_movies = read_movies(file)
-    year_movies(1940, L_movies)
+    file = open_file('users')
+    L_users = read_users(file)
+    file = open_file('reviews')
+    L_reviews = read_reviews(9,file)
+
+    print(f"L_users: {L_users}")
+    print(f"L_reviews: {L_reviews}")
+    print(occ_users('technician', L_users, L_reviews))
 
 if __name__ == "__main__":
     main()
