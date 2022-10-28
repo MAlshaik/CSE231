@@ -42,7 +42,7 @@ correct name is entered.'''
     
 def read_reviews(N,fp):
     ''' returns a list of tuple of the movie id and raiting'''
-    reviews = [[] for _ in range(N+1)]
+    reviews = [[] for x in range(N+1)]
     lines = fp.readlines()
     for line in lines:
         cur = line.split('\t')[0:3]
@@ -97,7 +97,7 @@ def genre_movies(genre,L_movies):
     for tup in L_movies:
         try:
             for gen in tup[2]:
-                if gen == genre:
+                if gen.lower() == genre.lower():
                     movies.append(L_movies.index(tup))
         except:
             pass
@@ -108,7 +108,7 @@ def gen_users (gender, L_users, L_reviews):
     gen_mov = []
     for i in range(len(L_users)):
         try:
-            if L_users[i][1] == gender:
+            if L_users[i][1].lower() == gender.lower():
                 gen_mov.append(L_reviews[i])
         except:
             pass
@@ -120,7 +120,7 @@ def occ_users (occupation, L_users, L_reviews):
     occ_use = []
     for i in range(len(L_users)):
         try:
-            if L_users[i][2] == occupation:
+            if L_users[i][2].lower() == occupation.lower():
                 occ_use.append(L_reviews[i])
         except:
             pass
@@ -128,21 +128,114 @@ def occ_users (occupation, L_users, L_reviews):
 
 def highest_rated_by_movie(L_in,L_reviews,N_movies):
     ''' Docstring'''
-    pass   # remove this line
+    avg = [0 for x in range(N_movies+1)] 
+    for i in range(len(avg)):
+        if i in L_in:
+            raiting = 0
+            rep = 0
+            for list in L_reviews:
+                for tup in list:
+                    if tup[0] == i:
+                        rep += 1
+                        raiting += tup[1]
+            try:
+                avg[i] = raiting/rep
+            except:
+                avg[i] = 0
+    index = [j for j in range(len(avg)) if round(avg[j],2) == round(max(avg),2)]
+    return index, round(max(avg),2)
              
 def highest_rated_by_reviewer(L_in,N_movies):
     ''' Docstring'''
-    pass   # remove this line
+    avg = [0 for x in range(N_movies+1)] 
+    for i in range(len(avg)):
+            raiting = 0
+            rep = 0
+            for list in L_in:
+                for tup in list:
+                    if tup[0] == i:
+                        rep += 1
+                        raiting += tup[1]
+            try:
+                avg[i] = raiting/rep
+            except:
+                avg[i] = 0
+   
+    index = [j for j in range(len(avg)) if avg[j] == max(avg)]
+    return index, round(max(avg),2)
  
 def main():
     file = open_file('users')
     L_users = read_users(file)
     file = open_file('reviews')
-    L_reviews = read_reviews(9,file)
+    L_reviews = read_reviews(100000,file)
+    file = open_file('movies')
+    L_movies = read_movies(file)
 
-    print(f"L_users: {L_users}")
-    print(f"L_reviews: {L_reviews}")
-    print(occ_users('technician', L_users, L_reviews))
+    option = 0
+    print(MENU)
+    while option != 5:
+        option = int(input('\nSelect an option (1-5): '))
+        while option not in range(1,6):
+            print("\nError: not a valid option.")
+            option = int(input('\nSelect an option (1-5): '))
+            
+        if option == 1:
+            year = int(input('\nInput a year: '))
+            while year < 1930 or year > 1998:
+                print("\nError in year.")
+                year = int(input('\nInput a year: '))
+            
+            year_mov = year_movies(year, L_movies)
+            id, avg = highest_rated_by_movie(year_mov, L_reviews, len(L_movies))
+
+            print(f'\nAvg max rating for the year is: {avg}')
+            for i in id:
+                print(L_movies[i][0])
+
+        if option == 2:
+            genres = [gen.lower() for gen in GENRES]
+            print(f'\nValid Genres are:  {GENRES}')
+            genre = input('Input a genre: ').lower()
+            while genre not in genres:
+                print("\nError in genre.")
+                genre = input('Input a genre: ').lower()
+
+            genre_mov = genre_movies(genre, L_movies)
+            id, avg = highest_rated_by_movie(genre_mov, L_reviews, len(L_movies))
+
+            print(f'\nAvg max rating for the Genre is: {avg}')
+            for i in id:
+                print(L_movies[i][0])
+
+        if option == 3:
+            gender = input('\nInput a gender (M,F): ').lower()
+            while gender != 'm' and gender != 'f':
+                print("\nError in gender.")
+                gender = input('\nInput a gender (M,F): ').lower()
+            
+            gen_user = gen_users(gender.upper(), L_users, L_reviews)
+            id, avg = highest_rated_by_reviewer(gen_user, len(L_movies))
+
+            print(f'\nAvg max rating for the Gender is: {avg}')
+            for i in id:
+                print(L_movies[i][0])
+
+        if option == 4:
+            occupations = [ocu.lower() for ocu in OCCUPATIONS]
+            print(f'\nValid Occupatipns are:  {OCCUPATIONS}')
+            occupation = input('Input an occupation: ').lower()
+            while occupation not in occupations:
+                print("\nError in occupation.")
+                occupation = input('Input an occupation: ').lower()
+
+            occ_user = occ_users(occupation, L_users, L_reviews)
+            id, avg = highest_rated_by_reviewer(occ_user, len(L_movies))
+
+            print(f'\nAvg max rating for the occupation is: {avg}')
+            for i in id:
+                print(L_movies[i][0])
+
 
 if __name__ == "__main__":
     main()
