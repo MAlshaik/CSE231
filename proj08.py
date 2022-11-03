@@ -22,27 +22,52 @@ def open_file(s):
 
 def read_names(fp):
     '''Docstring'''
-    pass # replace with your code
+    lines = fp.readlines()
+    names = []
+    for line in lines:
+        names.append(line.strip())
+    
+    return names
+
 
 def read_friends(fp,names_lst):
     '''Docstring'''
-    pass # replace with your code
+    lines = fp.readlines()
+    friends_list = []
+    for line in lines:
+        line = line.strip().split(',')
+        line.pop()
+        friends = []
+        for index in line:
+            friends.append(names_lst[int(index)])
+        friends_list.append(friends)
+    return friends_list
+            
 
 def create_friends_dict(names_lst,friends_lst):
     '''Docstring'''
-    pass # replace with your code
+    friends_dict = {}
+    for name in names_lst:
+        friends_dict[name] = friends_lst[names_lst.index(name)]
+    
+    return friends_dict
             
 def find_common_friends(name1, name2, friends_dict):
     '''Docstring'''
-    pass # replace with your code
+    return set(friends_dict[name1]) & set(friends_dict[name2])
 
 def find_max_friends(names_lst, friends_lst):
     '''Docstring'''
-    pass # replace with your code
+    len_friends = [len(x) for x in friends_lst]
+    max_freinds = max(len_friends)
+    max_names = [names_lst[i] for i in range(len(friends_lst)) if len(friends_lst[i]) == max]
+
+    return max_names,max_freinds
+    
     
 def find_max_common_friends(friends_dict):
     '''Docstring'''
-    pass # replace with your code
+    
     
 def find_second_friends(friends_dict):
     '''Docstring'''
