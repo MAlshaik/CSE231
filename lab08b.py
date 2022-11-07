@@ -24,11 +24,11 @@ for line in lines2:
         Names.append(line[0])
         data_dict[line[0]] = int(line[-1])
 
+Names.sort()
 
-print(Names)
 for name in Names:
     new_dict[name] = data_dict[name]
-print( "{:10s} {:<10s}".format("Name", "Score"))
+print( "{:10s} {:<10s}".format("Name", "Total"))
 for i in new_dict:
      print("{:10s} {:<10d}".format(i, new_dict[i]))
 
