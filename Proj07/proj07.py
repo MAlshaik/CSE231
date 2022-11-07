@@ -1,7 +1,16 @@
-
-from operator import index
-
-from cv2 import LSD_REFINE_ADV
+###########################################################
+#
+#   Computer Project #7
+#   Algorithm
+#       Define all methods needed    
+#       prompt for users, reviews, and movie files until valid values are entered
+#       print menue
+#       prompt user for option 1-5
+#       depending on option, call required functions
+#       ask for user for input if needed
+#       print results
+#       Ask for user input again until input is 5
+#############################################################
 
 
 GENRES = ['Unknown','Action', 'Adventure', 'Animation',"Children's",
@@ -43,9 +52,11 @@ correct name is entered.'''
 def read_reviews(N,fp):
     ''' returns a list of tuple of the movie id and raiting'''
     reviews = [[] for x in range(N+1)]
+    # initilizes list of size N+1
     lines = fp.readlines()
     for line in lines:
         cur = line.split('\t')[0:3]
+        #splits the text file everywhere there is a tab and omits last value
         reviews[int(cur[0])].append((int(cur[1]), int(cur[2])))
         reviews[int(cur[0])].sort()
     
@@ -57,6 +68,7 @@ def read_users(fp):
     lines = fp.readlines()
     for line in lines:
         cur = line.split('|')[1:4]
+        #splits the user text file everywhere there is a |
         cur[0] = int(cur[0])
         users.append(tuple(cur))
     return users
@@ -71,6 +83,7 @@ def read_movies(fp):
         genre = []
         for i in range(len(cur_genre)):
             if int(cur_genre[i]) == 1:
+                # if the genre is true, then it appends that genre's title to the list of genres
                 genre.append(GENRES[i])
         cur = line.split('|')[1:3]
         cur.append(genre)
@@ -88,23 +101,25 @@ def year_movies(year,L_movies):
             if date == year:
                 movies.append(L_movies.index(movie))
         except:
+            # try an except is used in case the list date is being indexed into is empty
             pass
     return movies
 
 def genre_movies(genre,L_movies):
-    ''' Docstring'''
+    ''' This function filters the main movie list to find movies for a specific genre and returns their ids as a list.'''
     movies = []
     for tup in L_movies:
         try:
             for gen in tup[2]:
                 if gen.lower() == genre.lower():
+                    #made sure both gen and genre are lower case so no errors are in user input
                     movies.append(L_movies.index(tup))
         except:
             pass
     return movies
 
 def gen_users (gender, L_users, L_reviews):
-    ''' Docstring'''
+    ''' This function filters the main reviews list to find reviews for a specific gender of users and returns them as a list of lists.'''
     gen_mov = []
     for i in range(len(L_users)):
         try:
@@ -116,7 +131,8 @@ def gen_users (gender, L_users, L_reviews):
 
           
 def occ_users (occupation, L_users, L_reviews):
-    ''' Docstring'''
+    ''' This function filters the main reviews list to find records for a specific occupational group of users and returns them as a list of lists of 
+    tuples.'''
     occ_use = []
     for i in range(len(L_users)):
         try:
@@ -127,7 +143,8 @@ def occ_users (occupation, L_users, L_reviews):
     return occ_use
 
 def highest_rated_by_movie(L_in,L_reviews,N_movies):
-    ''' Docstring'''
+    ''' This function calculates the average rating for the reviews in L_reviews list of the movies in L_in list and returns a list of the highest
+     average rated movies and the highest average. '''
     avg = [0 for x in range(N_movies+1)] 
     for i in range(len(avg)):
         if i in L_in:
@@ -136,17 +153,19 @@ def highest_rated_by_movie(L_in,L_reviews,N_movies):
             for list in L_reviews:
                 for tup in list:
                     if tup[0] == i:
+                    #adds one to the repitition of the raiting for that movie and adds the raiting to the total raiting of the movie
                         rep += 1
                         raiting += tup[1]
             try:
                 avg[i] = raiting/rep
+                #appends the average raiting to the avg list
             except:
                 avg[i] = 0
     index = [j for j in range(len(avg)) if round(avg[j],2) == round(max(avg),2)]
     return index, round(max(avg),2)
              
 def highest_rated_by_reviewer(L_in,N_movies):
-    ''' Docstring'''
+    ''' This function calculates the average rating for movies by a specific group of users (L_in) and returns a list of the highest average rated movies and the highest average.'''
     avg = [0 for x in range(N_movies+1)] 
     for i in range(len(avg)):
             raiting = 0
@@ -179,7 +198,7 @@ def main():
         while option not in range(1,6):
             print("\nError: not a valid option.")
             option = int(input('\nSelect an option (1-5): '))
-            
+
         if option == 1:
             year = int(input('\nInput a year: '))
             while year < 1930 or year > 1998:
@@ -191,6 +210,7 @@ def main():
 
             print(f'\nAvg max rating for the year is: {avg}')
             for i in id:
+            #goes through each integer in id and prints the corrispoding movie name
                 print(L_movies[i][0])
 
         if option == 2:
