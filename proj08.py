@@ -8,7 +8,7 @@ MENU = '''
     5: Quit                       '''
     
 def open_file(s):
-    '''Docstring'''
+    '''This function prompts the user to input a file name to open and keeps prompting until a correct name is entered. '''
     file = input(f"\nInput a {s} file: ")
     while(True):
         try:
@@ -21,7 +21,7 @@ def open_file(s):
     return data
 
 def read_names(fp):
-    '''Docstring'''
+    '''This function reads the Names.txt file using file pointer, fp.'''
     lines = fp.readlines()
     names = []
     for line in lines:
@@ -31,7 +31,7 @@ def read_names(fp):
 
 
 def read_friends(fp,names_lst):
-    '''Docstring'''
+    '''This function reads the Friends.csv file using file pointer, fp. '''
     lines = fp.readlines()
     friends_list = []
     for line in lines:
@@ -45,7 +45,7 @@ def read_friends(fp,names_lst):
             
 
 def create_friends_dict(names_lst,friends_lst):
-    '''Docstring'''
+    '''This function takes the two lists created in the read_names function and the read_friends function and builds a dictionary.'''
     friends_dict = {}
     for name in names_lst:
         friends_dict[name] = friends_lst[names_lst.index(name)]
@@ -53,29 +53,58 @@ def create_friends_dict(names_lst,friends_lst):
     return friends_dict
             
 def find_common_friends(name1, name2, friends_dict):
-    '''Docstring'''
+    '''This function takes two names (strings) and the friends_dict (returned by the create_friends_dict) and returns a set of friends that the two names have in common. '''
     return set(friends_dict[name1]) & set(friends_dict[name2])
 
 def find_max_friends(names_lst, friends_lst):
-    '''Docstring'''
+    '''This function takes a list of names and the corresponding list of friends and determines who has the most friends.'''
     len_friends = [len(x) for x in friends_lst]
     max_freinds = max(len_friends)
-    max_names = [names_lst[i] for i in range(len(friends_lst)) if len(friends_lst[i]) == max]
+    max_names = [names_lst[i] for i in range(len(friends_lst)) if len(friends_lst[i]) == max_freinds]
 
-    return max_names,max_freinds
+    return sorted(max_names),max_freinds
     
     
 def find_max_common_friends(friends_dict):
-    '''Docstring'''
+    '''This function takes the friends dictionary and finds which pairs of people have the most friends in common. '''
+    max_common_friends = -9999
+    pair = []
+    pair_friends = []
+    for key in friends_dict:
+        for sec in friends_dict:
+            if sec != key and (sec,key) not in pair:
+                pair.append((key,sec))
+                pair_friends.append(len(set(friends_dict[key]) & set(friends_dict[sec])))
     
+    max_f = max(pair_friends)
+    max_pair = [pair[i] for i in range(len(pair)) if pair_friends[i] == max_f]
+
+    return max_pair, max_f
     
 def find_second_friends(friends_dict):
-    '''Docstring'''
-    pass # replace with your code
+    '''Find the freinds of freinds of each person in the dictionary'''
+    second_dict = {}
+    for key in friends_dict:
+        second_dict[key] = set()
+        base = {key}
+        for i in friends_dict[key]:
+            base.add(i)
+            for n in friends_dict[i]:
+                second_dict[key].add(n)
+        second_dict[key] -= base
+    
+    return second_dict
+        
+        
 
 def find_max_second_friends(seconds_dict):
-    '''Docstring'''
-    pass # replace with your code
+    '''Find who has the most freinds of freinds'''
+    m = list(seconds_dict.values())
+    m_len = [len(i) for i in m]
+    max_l = max(m_len)
+
+    max_f = [i for i in list(seconds_dict.keys()) if len(seconds_dict[i]) == max_l]
+    return max_f,max_l
 
 def main():
     print("\nFriend Network\n")
@@ -85,10 +114,6 @@ def main():
     friends_lst = read_friends(fp,names_lst)
     friends_dict = create_friends_dict(names_lst,friends_lst)
 
-    print("\nFriend Network:")
-    for name,friends in friends_dict.items():
-        print(name,":")
-        print("   {}".format(friends))
 
     print(MENU)
     choice = input("\nChoose an option: ")
@@ -121,7 +146,19 @@ def main():
                 print(name)
                 
         elif choice == "4":
-            pass  # YOUR CODE GOES HERE
+            name = input("\nEnter a name: ")
+            while True:
+                try:
+                    name_lst = friends_dict[name.strip()]
+                    print(f"\nFriends of {name}:")
+                    for i in name_lst:
+                        print(i)
+                    break
+
+                except:
+                    print(f"\nThe name {name} is not in the list.")
+                    name = input("\nEnter a name: ")
+
 
         else: 
             print("Shouldn't get here.")
