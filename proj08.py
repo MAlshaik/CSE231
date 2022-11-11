@@ -1,3 +1,15 @@
+###########################################################
+#   Computer Project #8
+#   Algorithm
+#       Define all methods needed    
+#       prompt for users, and friends files until valid values are entered
+#       print menue
+#       prompt user for option 1-5
+#       depending on option, call required functions
+#       ask for user for input if needed
+#       print results
+#       Ask for user input again until input is 5
+#############################################################
 
 MENU = '''
  Menu : 
@@ -37,6 +49,7 @@ def read_friends(fp,names_lst):
     for line in lines:
         line = line.strip().split(',')
         line.pop()
+        #gets rid of unecisary index
         friends = []
         for index in line:
             friends.append(names_lst[int(index)])
@@ -55,12 +68,13 @@ def create_friends_dict(names_lst,friends_lst):
 def find_common_friends(name1, name2, friends_dict):
     '''This function takes two names (strings) and the friends_dict (returned by the create_friends_dict) and returns a set of friends that the two names have in common. '''
     return set(friends_dict[name1]) & set(friends_dict[name2])
-
+    #uses set adition to find the common freinds between the two sets
 def find_max_friends(names_lst, friends_lst):
     '''This function takes a list of names and the corresponding list of friends and determines who has the most friends.'''
     len_friends = [len(x) for x in friends_lst]
     max_freinds = max(len_friends)
     max_names = [names_lst[i] for i in range(len(friends_lst)) if len(friends_lst[i]) == max_freinds]
+    #uses list comprehention to find the names of the people with the most freinds
 
     return sorted(max_names),max_freinds
     
@@ -73,11 +87,13 @@ def find_max_common_friends(friends_dict):
     for key in friends_dict:
         for sec in friends_dict:
             if sec != key and (sec,key) not in pair:
+            #checks to see if the dict index is the same or if the dict pair have already been checkec
                 pair.append((key,sec))
                 pair_friends.append(len(set(friends_dict[key]) & set(friends_dict[sec])))
     
     max_f = max(pair_friends)
     max_pair = [pair[i] for i in range(len(pair)) if pair_friends[i] == max_f]
+    #uses list comprehention to find the pair that have the most common friends
 
     return max_pair, max_f
     
