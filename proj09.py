@@ -9,6 +9,7 @@ MENU = '''\nSelect an option from below:
             (6) quit
     '''
 WELCOME = "Welcome to the New York Stock Exchange.\n"
+TITLE = "Companies in the New York Stock Market from 2010 to 2016"
     
 def open_file():
     '''This function prompts the user to input a file name to open and keeps prompting until a correct name is entered. '''
@@ -16,19 +17,23 @@ def open_file():
     file2 = input("\nEnter the security's filename: ")
 
     while(True):
-        try: data1 = open(file1)
+        try: 
+            data1 = open(file1)
         except:
              print("\nFile not found. Please try again.")
              file = input("\nEnter the price's filename: ") 
              #makes sure the file is valid
-        try: data2 = open(file2) 
+        try: 
+            data2 = open(file2) 
         except:
              print("\nFile not found. Please try again.")
              file = input("\nEnter the security's filename: ") 
              #makes sure the file is valid
-        
-        if data1 != None and data2 != None:
-            break
+        try:
+            if data1 != None and data2 != None:
+                break
+        except:
+            continue
 
     return data1, data2
 
@@ -55,7 +60,7 @@ def add_prices (master_dictionary, prices_file_pointer):
         except:
             continue
 
-def get_max_price_of_company (master_dictionary, company_symbol):
+def get_max_price_of_company(master_dictionary, company_symbol):
     '''Docstring'''
     tuples = []
 
@@ -67,20 +72,89 @@ def get_max_price_of_company (master_dictionary, company_symbol):
     
     return max(tuples)
 
-def find_max_company_price (master_dictionary):
+def find_max_company_price(master_dictionary):
     '''Docstring'''
-    pass
+    tuples = []
+    for company in master_dictionary:
+        tuples.append((get_max_price_of_company(master_dictionary, company)[0], company))
+    
+    tuples = [i for i in tuples if None not in i]
+    maxi = max(tuples)
+    return (maxi[1], maxi[0])
+    
 
 def get_avg_price_of_company (master_dictionary, company_symbol):
     '''Docstring'''
-    pass
+    if company_symbol not in master_dictionary or len(master_dictionary[company_symbol][5]) == 0:
+        return 0.0
+    
+    prices = [line[4] for line in master_dictionary[company_symbol][5]]
+
+    return round(sum(prices)/len(prices),2)
+    
+    
+
             
 def display_list (lst):  # "{:^35s}"
     '''Docstring'''
-    pass
+    count = 0
+    for i in lst:
+        if count < 2:
+            print(f"{i:^35s}", end="")
+            count += 1
+        elif count == 2:
+            print(f"{i:^35s}")
+            count = 0
     
 def main():
-    pass
+    print(WELCOME)
+    file1, file2 = open_file()
+    names, master_dictionary = read_file(file2)
+    add_prices(master_dictionary, file1)
+    option = 0
+
+    while option != 6:
+        print(MENU)
+        option = int(input("\nOption: "))
+        if option == 1:
+            print(f"\n{TITLE:^105s}")
+            display_list(list(sorted(names)))
+            print("\n")
+        if option == 2:
+            symboles = [i for i in master_dictionary]
+            print("\ncompanies' symbols:")
+            display_list(sorted(symboles))
+            print("\n")
+        if option == 3:
+            symbole = input("\nEnter company symbol for max price: ")
+
+            while symbole not in master_dictionary:
+                print("\nError: not a company symbol. Please try again.")
+                symbole = input("\nEnter company symbol for max price: ")
+            max_tuple = get_max_price_of_company(master_dictionary, symbole)
+
+            if max_tuple == (None, None):
+                print("\nThere were no prices.")
+            else:
+                print(f"\nThe maximum stock price was ${max_tuple[0]:.2f} on the date {max_tuple[1]:s}/\n")
+        if option == 4:
+            max_price = find_max_company_price(master_dictionary)
+            print(f"\nThe company with the highest stock price is {max_price[0]:s} with a value of ${max_price[1]:.2f}\n")
+        if option == 5:
+            symbole = input("\nEnter company symbol for average price: ")
+
+            while symbole not in master_dictionary:
+                print("\nError: not a company symbol. Please try again.")
+                symbole = input("\nEnter company symbol for average price: ")
+            
+            avg_price = get_avg_price_of_company(master_dictionary, symbole)
+            if avg_price == 0.0:
+                print("\nThere were no prices.")
+            else:
+                print(f"\nThe average stock price was ${avg_price:.2f}.\n")
+        if option == 6:
+            quit()
+        
        
 if __name__ == "__main__": 
-    main() 
+    main()
