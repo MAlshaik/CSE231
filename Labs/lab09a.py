@@ -2,50 +2,59 @@ from operator import itemgetter
 
 
 def build_map(in_file1, in_file2):
-
+       
     in_file1.readline()
     in_file2.readline()
+    data_map = {}
 
     for line in in_file1.readlines():
 
         # Split the line into two words
         continent_list = line.strip().split()
-
+        
         # Convert to Title case, discard whitespace
         continent = continent_list[0].strip().title()
         country = continent_list[1].strip().title()
-
-        data_map = {}
+        
+        
         if continent != "":
             if continent not in data_map:
                 if country != "":
-                    data_map[continent] = list(country)
+                    data_map[continent] = {country:''}
             else:
                 if country != "":
-                    data_map[continent].append(country)
+                    data_map[continent].update({country:''})
 
+            
             # If country is not empty insert (continent is guaranteed to be in map)
-            # YOUR CODE
-
-                 # If current country not in map, insert it
-
-     # READ EACH LINE FROM FILE 2
+            #YOUR CODE
+            
+                 # If current country not in map, insert it 
+    for line in in_file2.readlines():      
+    
 
         # Split the line into two words
         countries_list = line.strip().split()
-
+        
         # Convert to Title case, discard whitespace
         country = countries_list[0].strip().title()
         city = countries_list[1].strip().title()
-
+        
         # Ignore empty strings
         if country != "":
-
+            
             # insert city (country is guaranteed to be in map)
             for continent in data_map:
-                if country in data_map[continent]:
-                    data_map[continent].append(country)
+                try:
+                    if data_map[continent][country] == "" and city not in data_map[continent][country]:
+                        data_map[continent][country] = [city]
+                    else:
+                        data_map[continent][country].append(city)
+                except:
+                    continue
     return data_map
+
+    
 
 
 def display_map(data_map):
