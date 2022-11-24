@@ -1,3 +1,14 @@
+###########################################################
+#   Computer Project #10
+#   Algorithm
+#       Define all methods needed    
+#       print menue
+#       prompt user for option 1-6
+#       depending on option, call required functions
+#       check if option value/destination is valid
+#       print results
+#       Ask for user input again until input is Q
+#############################################################
 
 from cards import Card, Deck
 
@@ -14,14 +25,17 @@ MENU ='''Prompt the user for an option and check that the input has the
     Q: Quit the game        
     '''
 def initialize():
+    """Initialize the game"""
     stock = Deck()
     foundations = [[] for i in range(4)]
     tableau = [[] for i in range(7)]
     for j in range(7):
         for i in range(j,7):
             tableau[i].append(stock.deal())
+            #appends cards to the deck in the correct order
             if j != i:
                 tableau[i][-1].flip_card()
+                #makes sure the last card is flipped
     waste = [stock.deal()]
     return tableau, stock, foundations, waste
 
@@ -71,7 +85,7 @@ def display(tableau, stock, foundation, waste):
     
 
 def stock_to_waste( stock, waste ):
-    '''Docstring'''
+    '''moves a card from stock to waste'''
     if stock.is_empty():
         return False
     waste.append(stock.deal())
@@ -79,11 +93,13 @@ def stock_to_waste( stock, waste ):
     
        
 def waste_to_tableau( waste, tableau, t_num ):
-    '''Docstring'''
+    '''moves a card from waste to tableau'''
     if len(waste) == 0:
+        #makes sure that wast has at least one card
         return False
     
     if len(tableau[t_num]) == 0:
+    # if the card is king then it can go in an empyt spot
         if waste[-1].rank() == 13:
             tableau[t_num].append(waste.pop())
             return True
@@ -104,7 +120,7 @@ def waste_to_tableau( waste, tableau, t_num ):
     return False
 
 def waste_to_foundation( waste, foundation, f_num ):
-    '''Docstring'''
+    '''moves a card from waste to the foundation'''
     if len(waste) == 0:
         return False
 
@@ -122,38 +138,53 @@ def waste_to_foundation( waste, foundation, f_num ):
 
 
 def tableau_to_foundation( tableau, foundation, t_num, f_num ):
-    '''Docstring'''
+    '''moves a card from tableau to foundation'''
     if len(tableau[t_num]) == 0:
         return False
 
     if len(foundation[f_num]) == 0:
         if tableau[t_num][-1].value() == 1:
             foundation[f_num].append(tableau[t_num].pop())
+            try:
+                if(tableau[t_num][-1].is_face_up() != True):
+                # if the card is not already facing up, then face up
+                    tableau[t_num][-1].flip_card()
+
+            except:
+                pass
             return True
         return False
     
     if tableau[t_num][-1].suit() == foundation[f_num][-1].suit() and (tableau[t_num][-1].rank() - 1) == foundation[f_num][-1].rank():
         foundation[f_num].append(tableau[t_num].pop())
+        foundation[f_num][-2].flip_card()
+        try:
+            if(tableau[t_num][-1].is_face_up() != True):
+                    tableau[t_num][-1].flip_card()
+        except:
+            pass
         return True
 
     return False
 
 def tableau_to_tableau( tableau, t_num1, t_num2 ):
-    '''Docstring'''
+    '''moves a card from tableau 1 to tableau 2'''
     if len(tableau[t_num1]) == 0:
         return False
     
     if len(tableau[t_num2]) == 0:
         if tableau[t_num1][-1].rank() == 13:
             tableau[t_num2].append(tableau[t_num1].pop())
-            tableau[t_num1][-1].flip_card()
+            try:
+                tableau[t_num1][-1].flip_card()
+            except:
+                pass
             return True
         return False
 
     if tableau[t_num1][-1].suit() in (3,2) and tableau[t_num2][-1].suit() in (1,4):
         if tableau[t_num1][-1].rank() + 1 == tableau[t_num2][-1].rank():
             tableau[t_num2].append(tableau[t_num1].pop())
-            tableau[t_num2][-2].flip_card()
             try:
                 tableau[t_num1][-1].flip_card()
             except:
@@ -164,7 +195,6 @@ def tableau_to_tableau( tableau, t_num1, t_num2 ):
     if tableau[t_num1][-1].suit() in (1,4) and tableau[t_num2][-1].suit() in (3,2):
         if tableau[t_num1][-1].rank() + 1 == tableau[t_num2][-1].rank():
             tableau[t_num2].append(tableau[t_num1].pop())
-            tableau[t_num2][-2].flip_card()
             try:
                 tableau[t_num1][-1].flip_card()
             except:
@@ -175,10 +205,12 @@ def tableau_to_tableau( tableau, t_num1, t_num2 ):
     return False
     
 def check_win (stock, waste, foundation, tableau):
-    '''Docstring'''
-    if stock.is_empty() and len(waste) == 0:
+    '''checks if the game is in a winning state'''
+    if len(stock) == 0 and len(waste) == 0:
+    #checks if stock and waste are empty
         for i in tableau:
             if len(i) != 0:
+            #check if every list in tableau is empty
                 return False
         return True
     return False
@@ -253,17 +285,17 @@ def main():
     option = ''
     while option != None:
         display(tableau, stock, foundations, waste)
-        option = input("\nInput an option (TT,TF,WT,WF,SW,R,H,Q): " )
+        option = input("\nInput an option (TT,TF,WT,WF,SW,R,H,Q): ")
         option = parse_option(option)
         while option == None:
+            display(tableau, stock, foundations, waste)
             option = input("\nInput an option (TT,TF,WT,WF,SW,R,H,Q): " )
             option = parse_option(option)
 
         if option[0] == "TT":
             valid = tableau_to_tableau(tableau, option[1]-1, option[2]-1)
-            if valid:
-                display(tableau, stock, foundations, waste)
-            else:
+            #subtracted one from option to account for index position
+            if valid != True:
                 print("\nInvalid move!\n")
         elif option[0] == "TF":
             valid = tableau_to_foundation(tableau, foundations, option[1]-1, option[2]-1)
@@ -274,37 +306,32 @@ def main():
                     quit()
             else:
                 print("\nInvalid move!\n")
-        elif option[0] == "w":
-            if option[1] == 'f':
-                valid = waste_to_foundation(waste, foundations, int(option[3]))
-                if valid:
-                    if check_win(tableau, stock, foundations, waste):
-                        print("You won!")
-                        display(tableau, stock, foundations, waste)
-                        quit()
-                else:
-                    print("\nInvalid move!\n")
-            else:
-                if option[1] == 't':
-                    valid = waste_to_tableau(waste, tableau, int(option[3]))
-                    if valid:
-                        display(tableau, stock, foundations, waste)
-                    else:
-                        print("\nInvalid move!\n")
-        elif option == 'sw':
-            valid = stock_to_waste()
+        elif option[0] == "WF":
+            valid = waste_to_foundation(waste, foundations, option[1]-1)
             if valid:
-                display(tableau, stock, foundations, waste)
+                if check_win(tableau, stock, foundations, waste):
+                    print("You won!")
+                    display(tableau, stock, foundations, waste)
+                    quit()
             else:
                 print("\nInvalid move!\n")
-        elif option == 'r':
+        elif option[0] == 'WT':
+            valid = waste_to_tableau(waste, tableau, option[1]-1)
+            if valid != True:
+                print("\nInvalid move!\n")
+
+        elif option[0] == 'SW':
+            valid = stock_to_waste(stock, waste)
+            if valid != True:
+                print("\nInvalid move!\n")
+        elif option[0] == 'R':
             stock.shuffle()
             tableau, stock, foundations, waste = initialize()
             print(MENU)
             display(tableau, stock, foundations, waste)
-        elif option == 'h':
+        elif option[0] == 'H':
             print(MENU)
-        elif option == 'q':
+        elif option[0] == 'Q':
             quit()
 
 
