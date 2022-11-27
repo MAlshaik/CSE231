@@ -291,7 +291,6 @@ def main():
             display(tableau, stock, foundations, waste)
             option = input("\nInput an option (TT,TF,WT,WF,SW,R,H,Q): " )
             option = parse_option(option)
-
         if option[0] == "TT":
             valid = tableau_to_tableau(tableau, option[1]-1, option[2]-1)
             #subtracted one from option to account for index position
